@@ -26,8 +26,23 @@ async function run() {
     await client.connect();
 
     const db = client.db('drivespeak');
-    const dataCollection = db.collection('data');
+    const dataCollection = db.collection('cardata');
     
+
+    // GET few cardata
+    app.get("/fewdata", async (req, res) => {
+      const result = await dataCollection.find().limit(6).toArray();
+      res.send(result);
+    })
+    
+    // GET all cardata
+    app.get('/alldata', async (req, res) => {
+      const result = await dataCollection.find().toArray();
+      res.send(result);
+    });
+
+
+
 
    
 
