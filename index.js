@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 dotenv.config();
 
-const uri = process.env.MDB_URI;
+const uri = process.env.MONGODB_URI;
 const app = express();
 const port = process.env.PORT || 7000;
 app.use(cors());
@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // it must be commented while deploy
-    await client.connect();
+    // await client.connect();
 
     const db = client.db('drivespeak');
     const dataCollection = db.collection('cardata');
@@ -47,7 +47,7 @@ async function run() {
    
 
     // it must be commented while deploy
-    await client.db('admin').command({ ping: 1 });
+    // await client.db('admin').command({ ping: 1 });
 
     console.log(
       'Pinged your deployment. You successfully connected to MongoDB!',
