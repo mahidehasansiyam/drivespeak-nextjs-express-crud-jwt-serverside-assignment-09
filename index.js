@@ -30,19 +30,38 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const db = client.db('drivespeak');
-    const dataCollection = db.collection('cardata');
+    const carCollection = db.collection('cardata');
 
-    // GET few cardata
-    app.get('/fewdata', async (req, res) => {
-      const result = await dataCollection.find().limit(6).toArray();
+    // GET few cars
+    app.get('/fewcars', async (req, res) => {
+      const result = await carCollection.find().limit(6).toArray();
       res.send(result);
     });
 
-    // GET all cardata
-    app.get('/alldata', async (req, res) => {
-      const result = await dataCollection.find().toArray();
+    // GET all cars
+    app.get('/allcars', async (req, res) => {
+      const result = await carCollection.find().toArray();
       res.send(result);
     });
+
+    // POST a new car
+    app.post('/newcar', async (req, res) => {
+      const newCar = req.body;
+      const result = await carCollection.insertOne(newCar);
+      res.send(result);
+    });
+
+    // GET my added cars
+    app.get("/allcars/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await carCollection.find({ email: email }).toArray();
+      res.send(result);
+    })
+
+
+
+
+
 
     console.log('Successfully connected to MongoDB!');
   } finally {
