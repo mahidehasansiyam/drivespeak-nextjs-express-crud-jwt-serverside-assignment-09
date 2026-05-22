@@ -54,7 +54,10 @@ async function run() {
     // GET my added cars
     app.get("/allcars/:email", async (req, res) => {
       const email = req.params.email;
-      const result = await carCollection.find({ email: email }).toArray();
+       const query = {
+         userEmail: email,
+       };
+      const result = await carCollection.find(query).toArray();
       res.send(result);
     })
 
