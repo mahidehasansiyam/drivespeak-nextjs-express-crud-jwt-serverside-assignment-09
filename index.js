@@ -61,10 +61,34 @@ async function run() {
       res.send(result);
     })
 
+    // Delete my added car
+    app.delete("/allcars/:email/:id", async (req, res) => {
+      const email = req.params.email;
+      const id = req.params.id;
 
+      const query = {
+        userEmail: email,
+        _id: new ObjectId(id),
+      };
 
+      const result = await carCollection.deleteOne(query);
+      res.send(result);
+    });
 
+    // Update my added car
+    app.patch("/allcars/:email/:id", async (req, res) => {
+      const email = req.params.email;
+      const id = req.params.id;
+      const updatedCar = req.body;
 
+      const query = {
+        userEmail: email,
+        _id: new ObjectId(id),
+      };
+
+      const result = await carCollection.updateOne(query, { $set: updatedCar });
+      res.send(result);
+    });
 
     console.log('Successfully connected to MongoDB!');
   } finally {
