@@ -90,6 +90,10 @@ async function run() {
       res.send(result);
     });
 
+
+
+    {" "}
+
     console.log('Successfully connected to MongoDB!');
   } finally {
     // await client.close();
