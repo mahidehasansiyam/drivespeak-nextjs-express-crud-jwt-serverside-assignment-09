@@ -31,6 +31,7 @@ async function run() {
   try {
     const db = client.db('drivespeak');
     const carCollection = db.collection('cardata');
+    const bookingCollection = db.collection("bookingData")
 
     // GET few cars
     app.get('/fewcars', async (req, res) => {
@@ -90,6 +91,31 @@ async function run() {
       res.send(result);
     });
 
+    // POST booking data
+    app.post('/allbookings', async (req, res) => {
+      try {
+        const newBooking = req.body;
+        // console.log(newBooking);
+        const result = await bookingCollection.insertOne(newBooking);
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+
+        res.status(500).send({
+          error: error.message,
+        });
+      }
+    });
+  
+  // GET my bookings
+    app.get("/allbookings/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = {
+        userEmail: email,
+      };
+      const result = await bookingCollection.find(query).toArray();
+      res.send(result);
+    });
 
 
     {" "}
