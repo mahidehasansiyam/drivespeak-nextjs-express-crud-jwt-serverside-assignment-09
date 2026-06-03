@@ -31,7 +31,7 @@ async function run() {
   try {
     const db = client.db('drivespeak');
     const carCollection = db.collection('cardata');
-    const bookingCollection = db.collection("bookingData")
+    const bookingCollection = db.collection('bookingData');
 
     // GET few cars
     app.get('/fewcars', async (req, res) => {
@@ -53,17 +53,17 @@ async function run() {
     });
 
     // GET my added cars
-    app.get("/allcars/:email", async (req, res) => {
+    app.get('/allcars/:email', async (req, res) => {
       const email = req.params.email;
-       const query = {
-         userEmail: email,
-       };
+      const query = {
+        userEmail: email,
+      };
       const result = await carCollection.find(query).toArray();
       res.send(result);
-    })
+    });
 
     // Delete my added car
-    app.delete("/allcars/:email/:id", async (req, res) => {
+    app.delete('/allcars/:email/:id', async (req, res) => {
       const email = req.params.email;
       const id = req.params.id;
 
@@ -77,7 +77,7 @@ async function run() {
     });
 
     // Update my added car
-    app.patch("/allcars/:email/:id", async (req, res) => {
+    app.patch('/allcars/:email/:id', async (req, res) => {
       const email = req.params.email;
       const id = req.params.id;
       const updatedCar = req.body;
@@ -106,9 +106,9 @@ async function run() {
         });
       }
     });
-  
-  // GET my bookings
-    app.get("/allbookings/:email", async (req, res) => {
+
+    // GET my bookings
+    app.get('/allbookings/:email', async (req, res) => {
       const email = req.params.email;
       const query = {
         userEmail: email,
@@ -117,8 +117,23 @@ async function run() {
       res.send(result);
     });
 
+    // Delete my booking car
+    app.delete('/allbookings/:email/:id', async (req, res) => {
+      const email = req.params.email;
+      const id = req.params.id;
 
-    {" "}
+      const query = {
+        userEmail: email,
+        _id: new ObjectId(id),
+      };
+
+      const result = await bookingCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    {
+      (' ');
+    }
 
     console.log('Successfully connected to MongoDB!');
   } finally {
