@@ -131,9 +131,46 @@ async function run() {
       res.send(result);
     });
 
-    {
-      (' ');
-    }
+    // GET Search and filter cars
+    app.get('/api/cars', async (req, res) => {
+      try {
+        // 1. Extract query params sent from the client-side
+        const { search, type, seats } = req.query;
+
+        // 2. Build a dynamic query object
+        let query = {};
+
+        // Case-insensitive regex search for the car name
+        if (search && search.trim() !== '') {
+          query.name = { $regex: search, $options: 'i' };
+        }
+
+        // Filter by car type (ignore if 'All')
+        if (type && type !== 'All') {
+          query.type = type;
+        }
+
+        // Filter by seat capacity (ignore if 'All'). Ensure it's parsed to a Number!
+        if (seats && seats !== 'All') {
+          query.seats = Number(seats);
+        }
+
+        // 3. Fetch filtered records from your MongoDB collection
+        const result = await carCollection.find(query).toArray();
+
+        // 4. Send response matching your frontend expectation (json.success & json.data)
+        res.send({
+          success: true,
+          data: result,
+        });
+      } catch (error) {
+        console.error('Filtering error:', error);
+        res.status(500).send({
+          success: false,
+          error: 'Failed to retrieve filtered cars',
+        });
+      }
+    });
 
     console.log('Successfully connected to MongoDB!');
   } finally {
