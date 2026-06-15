@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 );
-  
+
 app.use(express.json());
 
 const client = new MongoClient(uri, {
@@ -26,6 +27,31 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+// Get jwt token from client and verify it
+const verifyToken = async (req, res, next) => {
+  const authHeader = req?.headers.authorization;
+  // console.log(authHeader);
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  // find the JWKS endpoint and create a remote JWK set
+  const JWKS = createRemoteJWKSet(
+    new URL(`${process.env.CLIENT_URL}/api/auth/jwks`),
+  );
+  try {
+    const { payload } = await jwtVerify(token, JWKS);
+    // console.log(payload);
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+};
 
 async function run() {
   try {
@@ -92,7 +118,7 @@ async function run() {
     });
 
     // POST booking data
-    app.post('/allbookings', async (req, res) => {
+    app.post('/allbookings', verifyToken, async (req, res) => {
       try {
         const newBooking = req.body;
         // console.log(newBooking);
@@ -108,7 +134,7 @@ async function run() {
     });
 
     // GET my bookings
-    app.get('/allbookings/:email', async (req, res) => {
+    app.get('/allbookings/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
       const query = {
         userEmail: email,
