@@ -78,7 +78,7 @@ async function run() {
 
         // Use $inc to automatically increase the current bookingCount by 1
         const result = await carCollection.updateOne(
-          { id: carId },
+          { _id: new ObjectId(carId) },
           {
             $inc: { bookingCount: 1 },
           },
@@ -97,7 +97,7 @@ async function run() {
         res.status(500).json({ success: false, error: error.message });
       }
     });
-    
+
     // POST a new car
     app.post('/newcar', async (req, res) => {
       const newCar = req.body;
