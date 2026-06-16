@@ -70,7 +70,7 @@ async function run() {
       const result = await carCollection.find().toArray();
       res.send(result);
     });
-
+   
     // UPDATE car bookingCount after booking
     app.patch('/allcars/:id', async (req, res) => {
       try {
