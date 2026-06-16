@@ -60,13 +60,13 @@ async function run() {
     const bookingCollection = db.collection('bookingData');
 
     // GET few cars
-    app.get('/fewcars', async (req, res) => {
+    app.get('/fewcars',  async (req, res) => {
       const result = await carCollection.find().limit(6).toArray();
       res.send(result);
     });
-
+ 
     // GET all cars
-    app.get('/allcars', async (req, res) => {
+    app.get('/allcars',verifyToken,  async (req, res) => {
       const result = await carCollection.find().toArray();
       res.send(result);
     });
@@ -79,7 +79,7 @@ async function run() {
     });
 
     // GET my added cars
-    app.get('/allcars/:email', async (req, res) => {
+    app.get('/allcars/:email',verifyToken, async (req, res) => {
       const email = req.params.email;
       const query = {
         userEmail: email,
@@ -103,7 +103,7 @@ async function run() {
     });
 
     // Update my added car
-    app.patch('/allcars/:email/:id', async (req, res) => {
+    app.patch('/allcars/:email/:id' ,async (req, res) => {
       const email = req.params.email;
       const id = req.params.id;
       const updatedCar = req.body;
