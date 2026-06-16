@@ -64,7 +64,7 @@ async function run() {
       const result = await carCollection.find().limit(6).toArray();
       res.send(result);
     });
- 
+     
     // GET all cars
     app.get('/allcars',verifyToken,  async (req, res) => {
       const result = await carCollection.find().toArray();
